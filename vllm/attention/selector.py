@@ -20,6 +20,7 @@ class _Backend(enum.Enum):
     FLASH_ATTN_VLLM_V1 = enum.auto()
     XFORMERS = enum.auto()
     ROCM_FLASH = enum.auto()
+    TRITON_FLASH = enum.auto()
     TORCH_SDPA = enum.auto()
     OPENVINO = enum.auto()
     FLASHINFER = enum.auto()
@@ -150,6 +151,11 @@ def _cached_get_attn_backend(
         from vllm.attention.backends.rocm_flash_attn import (  # noqa: F401
             ROCmFlashAttentionBackend)
         return ROCmFlashAttentionBackend
+    elif backend == _Backend.TRITON_FLASH:
+        logger.info("Using TritonFlashAttention backend.")
+        from vllm.attention.backends.triton_flash_attn import (  # noqa: F401
+            TritonFlashAttentionBackend)
+        return TritonFlashAttentionBackend
     elif backend == _Backend.TORCH_SDPA:
         assert current_platform.is_cpu(), RuntimeError(
             "Torch SDPA backend is only used for the CPU device.")
